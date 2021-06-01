@@ -1,0 +1,8 @@
+<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect transform="rotate(90)" x="2.4414e-5" y="-100" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+    <g fill="#504416" shape-rendering="auto">
+        <path d="m100 0-100-1e-4c15.145 8.7374 32.516 13.351 50.001 13.381 17.457-0.044 34.878-4.657 49.999-13.381z" color="#000000" color-rendering="auto" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <path d="m100 100 3e-5 -100c-8.7373 15.145-13.351 32.516-13.381 50.001 0.0438 17.458 4.657 34.878 13.381 49.999z" color="#000000" color-rendering="auto" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <path d="m0.0037 0-3e-5 100c8.7373-15.145 13.351-32.516 13.381-50.001-0.0438-17.458-4.657-34.878-13.381-49.999z" color="#000000" color-rendering="auto" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+    </g>
+</svg>

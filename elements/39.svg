@@ -1,0 +1,9 @@
+<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g shape-rendering="auto">
+        <rect transform="rotate(90)" x="2.4414e-5" y="-100" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <rect transform="rotate(90)" x="30" y="-70" width="40" height="40" color="#000000" color-rendering="auto" fill="#520" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <rect transform="rotate(90)" x="35" y="-65" width="30" height="30" color="#000000" color-rendering="auto" fill="#a05a2c" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <rect transform="scale(-1)" x="-30" y="-55" width="30" height="10" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <rect x="70" y="45" width="30" height="10" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+    </g>
+</svg>

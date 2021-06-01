@@ -1,0 +1,7 @@
+<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g shape-rendering="auto">
+        <rect x="6.1241e-7" y=="0" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <path d="m-1.3876e-6 45v10h45v45h10v-45h45v-10z" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+        <rect x="45" y="45" width="10" height="10" color="#000000" color-rendering="auto" fill="#6c6753" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/>
+    </g>
+</svg>
