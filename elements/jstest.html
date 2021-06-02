@@ -4,7 +4,7 @@
 </div>
 <script>
 tiles = [
-    '<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"></svg>',
+    '<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="empty_tile" style="background-color: #fdd"></svg>',
     '<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/><rect y="45" width="100" height="10" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/></svg>',
     '<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect y="0" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/><path d="m0 45.001v10a45 45 0 0 1 45 45h10a55 55 0 0 0-55-55z" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/></svg>',
     '<svg width="100px" height="100px" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g shape-rendering="auto"><rect y="0" width="100" height="100" color="#000000" color-rendering="auto" fill="#008000" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/><path d="m45 1e-3v45h-45v10h45v45h10v-45h45v-10h-45v-45z" color="#000000" color-rendering="auto" fill="#d4aa00" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/><rect x="45" y="45" width="10" height="10" color="#000000" color-rendering="auto" fill="#6c6753" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/><rect x="45" y="45" width="10" height="10" color="#000000" color-rendering="auto" fill="#6c6753" image-rendering="auto" solid-color="#000000" style="isolation:auto;mix-blend-mode:normal"/></g></svg>',
@@ -53,24 +53,30 @@ tiles = [
     '<svg width="32px" height="30px" version="1.1" viewBox="0 0 32 30" xmlns="http://www.w3.org/2000/svg"><path d="m15.835 1e-3c-3.2292-0.0286-5.8565 2.9901-6.0801 6.0879-3.434 1.8167-7.7904 3.0273-9.6699 6.7637-0.58554 2.5416 2.2036 4.2262 4.3968 4.42 1.1157-0.0419 0.50797 0.54073 0.0237 1.0596-2.1312 2.7167-4.9218 5.7241-4.4577 9.4578 0.5948 2.1065 3.1858 2.1337 4.9439 1.8541 2.581-0.0987 5.4416 0.57163 7.8107-0.69529 1.5364-1.3481 1.8832-3.4832 3.1244-5.0358 1.2931 1.9782 1.8885 5.054 4.5368 5.6587 2.9415 0.3171 5.9229-0.0691 8.844 0.12837 1.8404-0.20124 3.0391-2.2212 2.3828-3.9457-0.53453-3.3451-3.453-5.7426-5.0606-8.3785 2.1626-0.21275 4.9594-1.3164 5.0938-3.8301-0.38792-3.1416-3.777-4.4092-6.177-5.7551-1.166-0.59233-2.3479-1.1514-3.5242-1.7234-0.28822-3.0936-2.8843-6.2323-6.1875-6.0664z" fill="#fff" stroke-width=".067205"/><path d="m15.555 1.121c-2.8689 0.10723-4.696 3.0043-4.752 5.6582-3.1134 1.7036-6.8073 2.7691-9.2051 5.5156-0.90257 1.0153-0.50822 2.6651 0.81633 3.0799 1.434 0.7106 3.0245 1.0531 4.6016 1.2677-1.7774 3.1988-5.0675 5.6084-5.8691 9.3027-0.23956 1.0419-0.0583 2.729 1.372 2.6134 3.0314-0.063 6.1002 0.1645 9.1143-0.09 1.4604-0.73112 1.6371-2.6724 2.5973-3.8712 0.50422-0.82442 0.97544-1.692 1.6645-2.3808 1.6671 1.7085 2.3182 4.1297 3.7617 5.9727 1.384 0.83449 3.1631 0.15909 4.6913 0.3789 1.9035-0.16725 3.9287 0.32068 5.7696-0.21484 1.0905-1.0164 0.50302-2.8214 0.0245-4.0285-1.3915-2.8208-3.7787-4.984-5.3702-7.6824 1.9575-0.35703 4.2455-0.59962 5.6797-2.1211 0.8695-1.6637-0.98246-3.1776-2.2293-3.9793-2.2823-1.4873-4.8062-2.5449-7.2355-3.7629-0.0626-2.9293-2.2334-5.9746-5.4316-5.6582z" stroke-width=".067205"/></svg>'
 ]
 
-function createTileNode(t) {
+function createTileNode(t, row, col) {
     let tile_svg = tiles[t[0]]
     let tile_rotation = t[1]
+    let dp = new DOMParser()
     let tile_node = dp.parseFromString(
         tile_svg,
         'text/html'
     ).body.childNodes[0]
     tile_node.style.transform = 'rotate(' + tile_rotation + 'deg)'
+    tile_node.setAttribute('board_row', row)
+    tile_node.setAttribute('board_col', col)
     return tile_node
 }
 
 function drawBoard() {
+    let field_node = document.getElementById('field')
+    field_node.innerHTML = ''
     for (row_i=0; row_i<document.board.length; row_i++) {
         let row = document.board[row_i]
         for (col_i=0; col_i<row.length; col_i++) {
             let cell = row[col_i]
             let tile = document.board[row_i][col_i]
-            let tile_node = createTileNode(tile)
+            let tile_node = createTileNode(tile, row_i, col_i)
+            tile[2] = tile_node
             field_node.appendChild(tile_node)
         }
         field_node.appendChild(document.createElement('br'))
@@ -79,10 +85,14 @@ function drawBoard() {
 
 function pickTile() {
     let pick = Math.floor(Math.random() * 45) + 1
-    picked_tile_node = createTileNode([pick, 0])
+    picked_tile_node = createTileNode([pick, 0], -1, -1)
     picked_tile_node.id = 'active_tile'
     picked_tile_node.style.position = 'absolute'
+    picked_tile_node.setAttribute('tile_type', pick)
+    picked_tile_node.setAttribute('tile_rotation', 0)
     document.body.appendChild(picked_tile_node)
+
+    moveTile()
 }
 
 function tileFollowMouse(e) {
@@ -107,6 +117,7 @@ function handleKeys(e) {
             )
             new_deg = (parseInt(curr_deg) + 90) % 360
             active_tile_node.style.transform = 'rotate(' + new_deg + 'deg)'
+            active_tile_node.setAttribute('tile_rotation', new_deg)
         }
     }
 }
@@ -115,43 +126,103 @@ document.addEventListener('keypress', handleKeys)
 function handleClicks() {
     active_tile_node = document.getElementById('active_tile')
     if (active_tile_node) {
-        placeTile(active_tile_node)
+        slot = slotUnderCursor()
+        if (slot) {
+            placeTile(slot)
+        }
     }
 }
 document.addEventListener('click', handleClicks)
+
+function slotUnderCursor() {
+    nodes = document.elementsFromPoint(event.clientX, event.clientY)
+    for (i=0; i<nodes.length; i++) {
+        node = nodes[i]
+        if (node.className.baseVal == 'empty_tile') {
+            console.log([node.getAttribute('board_row'), node.getAttribute('board_col')])
+            return [node.getAttribute('board_row'), node.getAttribute('board_col')]
+        }
+    }
+    return null
+}
 
 function moveTile() {
     document.addEventListener('mousemove', tileFollowMouse)
 }
 
-function placeTile(node) {
-    node.id = ''
+function placeTile(slot) {
+    active_tile_node = document.getElementById('active_tile')
+    active_tile_node.parentNode.removeChild(active_tile_node)
     document.removeEventListener('mousemove', tileFollowMouse)
+
+    typ = active_tile_node.getAttribute('tile_type')
+    rot = active_tile_node.getAttribute('tile_rotation')
+    document.board[slot[0]][slot[1]] = [parseInt(typ), parseInt(rot), active_tile_node]
+    extendBoard(slot)
 }
 
 function placeMeeple() {
     return
 }
 
-function padBoard() {
-    // TODO
+function extendBoard(slot) {
+    placed_row = slot[0]
+    placed_col = slot[1]
+
+    let board_rows = document.board.length
+    let board_cols = 0
+    for (row_i=0; row_i<document.board.length; row_i++) {
+        let row = document.board[row_i]
+        if (row.length > board_cols) {
+            board_cols = row.length
+        }
+    }
+
+    if (placed_row == 0) {
+        //TODO: add a row above
+        console.log('above')
+    }
+    if (placed_row == board_rows-1) {
+        //TODO: add a row below
+        console.log('below')
+    }
+    if (placed_col == 0) {
+        //TODO: add a column left
+        console.log('left')
+    }
+    if (placed_col == board_cols-1) {
+        //TODO: add a row below
+        console.log('right')
+    }
+
+    new_board = []
+    new_board_rows = board_rows + 2
+    new_board_cols = board_cols + 2
+    for (row_i=0; row_i<new_board_rows; row_i++) {
+        if (row_i > 0 && row_i <= board_rows) {
+            let old_row = document.board[row_i-1]
+            for (col_i=0; col_i<new_board_cols; col_i++) {
+                if (col_i > 0 && col_i <= board_cols) {
+                    let old_cell = old_row[col_i-1]
+                    //console.log(old_cell)
+                }
+            }
+        }
+    }
 }
 
-function game() {
+function startGame() {
     pickTile()
-    moveTile()
-    placeMeeple()
 }
 
 document.board = [
-    [ [ 7,   0] ]
+    [[0,0,null], [0,0,null], [0,0,null]],
+    [[0,0,null], [7,0,null], [0,0,null]],
+    [[0,0,null], [0,0,null], [0,0,null]]
 ]
 
-let field_node = document.getElementById('field')
-let dp = new DOMParser()
-
 drawBoard()
-game()
+startGame()
 
 // TODO:
 // pad board w 0 tiles
