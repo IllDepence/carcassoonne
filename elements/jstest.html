@@ -1,6 +1,10 @@
 <html>
 <head>
 <style>
+* {
+margin: 0;
+padding: 0;
+}
 #field {
 border: solid 1px #777;
 display: flex;
@@ -109,6 +113,7 @@ function createTileNode(t, row, col) {
     setTileRotation(tile_node, tile_rotation)
     tile_node.setAttribute('board_row', row)
     tile_node.setAttribute('board_col', col)
+    tile_node.querySelector('svg').style.zIndex = -1
     return tile_node
 }
 
@@ -126,8 +131,40 @@ function drawBoard() {
             let tile_node = createTileNode(tile, row_i, col_i)
             tile[2] = tile_node
             field_node.appendChild(tile_node)
+            let meeple = tile[3]
+            if (meeple) {
+                let p_num = meeple[0]
+                let offset_top = meeple[1]
+                let offset_left = meeple[2]
+                meeple_node = createMeepleNode(p_num)
+                meeple_node.style.top = (row_i*100) + offset_top + 'px'
+                meeple_node.style.left = (col_i*100) + offset_left + 'px'
+                tile_node.appendChild(meeple_node)
+            }
         }
     }
+    logBoard()
+}
+
+function logBoard() {
+    console.log('logBoard')
+    log_str = ''
+    for (row_i=0; row_i<document.board.length; row_i++) {
+        let row = document.board[row_i]
+        for (col_i=0; col_i<row.length; col_i++) {
+            let cell = row[col_i]
+            let tile = document.board[row_i][col_i]
+            if (tile[3]) {
+                log_str += '×'
+            } else if (tile[0] != 0) {
+                log_str += '□'
+            } else {
+                log_str += '_'
+            }
+        }
+        log_str += '\n'
+    }
+    console.log(log_str)
 }
 
 function pickTile() {
@@ -231,18 +268,25 @@ function placeTile(slot) {
     extendBoard(slot)
 }
 
-function moveMeeple(p_num) {
-    console.log('moveMeeple')
+function createMeepleNode(p_num) {
     p_color = player_colors[p_num]
     let dp = new DOMParser()
     let meeple_node = dp.parseFromString(
         meeple_svg,
         'text/html'
     ).body.childNodes[0]
-    meeple_node.id = 'active_meeple'
     meeple_node.style.position = 'absolute'
+    meeple_node.style.zIndex = 27
     let innerPath = meeple_node.querySelector('path:nth-child(2)')
     innerPath.style.fill = p_color
+    return meeple_node
+}
+
+function moveMeeple(p_num) {
+    console.log('moveMeeple')
+    meeple_node = createMeepleNode(p_num)
+    meeple_node.id = 'active_meeple'
+    meeple_node.style.position = 'absolute'
     document.body.appendChild(meeple_node)
     document.addEventListener('mousemove', meepleFollowMouse)
 }
@@ -260,10 +304,17 @@ function placeMeeple(tile_node) {
     board_row = tile_node.getAttribute('board_row')
     board_col = tile_node.getAttribute('board_col')
     tile_pos = tile_node.getBoundingClientRect()
-    console.log('[' + board_row + ', ' + board_col + '] @ ' + tile_pos.top + 'x' + tile_pos.left)
 
-    // document.board[slot[0]][slot[1]] = [parseInt(typ), parseInt(rot), active_tile_node]
-    // extendBoard(slot)
+    meeple_top_rel = meeple_pos.top - tile_pos.top,
+    meeple_left_rel = meeple_pos.left - tile_pos.left
+
+    document.board[board_row][board_col][3] = [
+        document.active_player,
+        meeple_top_rel,
+        meeple_left_rel
+    ]
+
+    nextPlayer()
     pickTile()
 }
 
@@ -309,26 +360,36 @@ function extendBoard(slot) {
     }
     updateTileIndices()
     drawBoard()
-    moveMeeple(3)
-    //pickTile()
+    moveMeeple(document.active_player)
 }
 
 function startGame() {
     console.log('startGame')
+    document.active_player = document.players[0]
     pickTile()
 }
 
+function nextPlayer() {
+    p_idx = document.players.indexOf(document.active_player)
+    if (p_idx+1 == document.players.length) {
+        document.active_player = document.players[0]
+    }
+    else {
+        document.active_player = document.players[p_idx+1]
+    }
+}
+
 document.board = [
-    [[0,0,null], [0,0,null], [0,0,null]],
-    [[0,0,null], [7,0,null], [0,0,null]],
-    [[0,0,null], [0,0,null], [0,0,null]]
+    [[0,0,null,null], [0,0,null,null], [0,0,null,null]],
+    [[0,0,null,null], [7,0,null,null], [0,0,null,null]],
+    [[0,0,null,null], [0,0,null,null], [0,0,null,null]]
 ]
 
+document.players = [0, 1, 2]
 drawBoard()
 startGame()
 
 // TODO:
-// implement placing of tiles by inserting into board matrix
 // implement placing meeple freely (=> no automated scoring)
 // implement taking turns
 
