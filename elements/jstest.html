@@ -139,7 +139,6 @@ function slotUnderCursor() {
     for (i=0; i<nodes.length; i++) {
         node = nodes[i]
         if (node.className.baseVal == 'empty_tile') {
-            console.log([node.getAttribute('board_row'), node.getAttribute('board_col')])
             return [node.getAttribute('board_row'), node.getAttribute('board_col')]
         }
     }
@@ -165,6 +164,19 @@ function placeMeeple() {
     return
 }
 
+function updateTileIndices() {
+    for (row_i=0; row_i<document.board.length; row_i++) {
+        let row = document.board[row_i]
+        for (col_i=0; col_i<row.length; col_i++) {
+            let tile_node = row[col_i][2]
+            if (tile_node) {
+                tile_node.setAttribute('board_row', row_i)
+                tile_node.setAttribute('board_col', col_i)
+            }
+        }
+    }
+}
+
 function extendBoard(slot) {
     placed_row = slot[0]
     placed_col = slot[1]
@@ -179,36 +191,25 @@ function extendBoard(slot) {
     }
 
     if (placed_row == 0) {
-        //TODO: add a row above
-        console.log('above')
+        let new_top = new Array(board_cols).fill([0, 0, null])
+        document.board = [new_top].concat(document.board)
     }
     if (placed_row == board_rows-1) {
-        //TODO: add a row below
-        console.log('below')
+        let new_bottom = new Array(board_cols).fill([0, 0, null])
+        document.board = document.board.concat([new_bottom])
     }
     if (placed_col == 0) {
-        //TODO: add a column left
-        console.log('left')
-    }
-    if (placed_col == board_cols-1) {
-        //TODO: add a row below
-        console.log('right')
-    }
-
-    new_board = []
-    new_board_rows = board_rows + 2
-    new_board_cols = board_cols + 2
-    for (row_i=0; row_i<new_board_rows; row_i++) {
-        if (row_i > 0 && row_i <= board_rows) {
-            let old_row = document.board[row_i-1]
-            for (col_i=0; col_i<new_board_cols; col_i++) {
-                if (col_i > 0 && col_i <= board_cols) {
-                    let old_cell = old_row[col_i-1]
-                    //console.log(old_cell)
-                }
-            }
+        for (row_i=0; row_i<document.board.length; row_i++) {
+            document.board[row_i] = [[0, 0, null]].concat(document.board[row_i])
         }
     }
+    if (placed_col == board_cols-1) {
+        for (row_i=0; row_i<document.board.length; row_i++) {
+            document.board[row_i] = document.board[row_i].concat([[0, 0, null]])
+        }
+    }
+    updateTileIndices()
+    drawBoard()
 }
 
 function startGame() {
@@ -225,7 +226,6 @@ drawBoard()
 startGame()
 
 // TODO:
-// pad board w 0 tiles
 // implement placing of tiles by inserting into board matrix
 // implement placing meeple freely (=> no automated scoring)
 // implement taking turns
