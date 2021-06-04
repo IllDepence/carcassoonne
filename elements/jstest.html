@@ -197,6 +197,7 @@ function handleKeys(e) {
     e = e || window.event
     var charCode = e.keyCode || e.which
     var charStr = String.fromCharCode(charCode)
+    // TODO: first test for active node tile, then allow to 'store' pick and to maintenance (remove meeple etc.)
     if (charStr == 'r') {
         active_tile_node = document.getElementById('active_tile')
         if (active_tile_node) {
@@ -206,10 +207,23 @@ function handleKeys(e) {
             active_tile_node.setAttribute('tile_rotation', new_deg)
         }
     }
+    if (charStr == 's') {
+        active_meeple_node = document.getElementById('active_meeple')
+        if (active_meeple_node) {
+            active_meeple_node.id = ''
+            active_meeple_node.parentNode.removeChild(active_meeple_node)
+            pickTile()
+        }
+        if (document.game_state == 'meeple-removal') {
+            moveMeeple(document.active_player)
+        }
+
+    }
 }
 document.addEventListener('keypress', handleKeys)
 
 function handleClicks() {
+    // TODO: maybe change if to checking for document.game_state
     active_tile_node = document.getElementById('active_tile')
     active_meeple_node = document.getElementById('active_meeple')
     if (active_tile_node) {
@@ -222,6 +236,19 @@ function handleClicks() {
         tile_node = getTileUnderCursor()
         if (tile_node) {
             placeMeeple(tile_node)
+        }
+    }
+    else if (document.game_state == 'meeple-removal') {
+        console.log('removey mcremoveface')
+        let meeple_node = getMeepleUnderCursor()
+        if (meeple_node) {
+            let tile_node = meeple_node.parentNode
+            tile_node.removeChild(meeple_node)
+            document.board[
+                tile_node.getAttribute('board_row')
+            ][
+                tile_node.getAttribute('board_col')
+            ][3] = null
         }
     }
 }
@@ -251,8 +278,21 @@ function getTileUnderCursor() {
     return null
 }
 
+function getMeepleUnderCursor() {
+    console.log('getMeepleUnderCursor')
+    let nodes = document.elementsFromPoint(event.clientX, event.clientY)
+    for (i=0; i<nodes.length; i++) {
+        let node = nodes[i]
+        if (node.classList.contains('meeple')) {
+            return node
+        }
+    }
+    return null
+}
+
 function moveTile() {
     console.log('moveTile')
+    document.game_state = 'tile-placement'
     document.addEventListener('mousemove', tileFollowMouse)
 }
 
@@ -284,6 +324,7 @@ function createMeepleNode(p_num) {
 
 function moveMeeple(p_num) {
     console.log('moveMeeple')
+    document.game_state = 'meeple-placement'
     meeple_node = createMeepleNode(p_num)
     meeple_node.id = 'active_meeple'
     meeple_node.style.position = 'absolute'
@@ -360,7 +401,11 @@ function extendBoard(slot) {
     }
     updateTileIndices()
     drawBoard()
-    moveMeeple(document.active_player)
+    removeMeeple()
+}
+
+function removeMeeple() {
+    document.game_state = 'meeple-removal'
 }
 
 function startGame() {
@@ -386,6 +431,7 @@ document.board = [
 ]
 
 document.players = [0, 1, 2]
+document.game_state = 'setup'
 drawBoard()
 startGame()
 
