@@ -167,9 +167,11 @@ function logBoard() {
     console.log(log_str)
 }
 
-function pickTile() {
+function pickAndMoveTile() {
     // TODO: adjust to proper tile probabilities
-    console.log('pickTile')
+    console.log('pickAndMoveTile')
+
+    // pick
     let pick = Math.floor(Math.random() * 45) + 1
     picked_tile_node = createTileNode([pick, 0], -1, -1)
     picked_tile_node.id = 'active_tile'
@@ -178,7 +180,8 @@ function pickTile() {
     picked_tile_node.setAttribute('tile_rotation', 0)
     document.body.appendChild(picked_tile_node)
 
-    moveTile()
+    // move
+    document.addEventListener('mousemove', tileFollowMouse)
 }
 
 function tileFollowMouse(e) {
@@ -192,67 +195,6 @@ function meepleFollowMouse(e) {
     active_meeple_node.style.left = e.pageX - 15 + 'px'
     active_meeple_node.style.top = e.pageY - 15+ 'px'
 }
-
-function handleKeys(e) {
-    e = e || window.event
-    var charCode = e.keyCode || e.which
-    var charStr = String.fromCharCode(charCode)
-    // TODO: first test for active node tile, then allow to 'store' pick and to maintenance (remove meeple etc.)
-    if (charStr == 'r') {
-        active_tile_node = document.getElementById('active_tile')
-        if (active_tile_node) {
-            let curr_deg = getTileRotation(active_tile_node)
-            let new_deg = (curr_deg + 90) % 360
-            setTileRotation(active_tile_node, new_deg)
-            active_tile_node.setAttribute('tile_rotation', new_deg)
-        }
-    }
-    if (charStr == 's') {
-        active_meeple_node = document.getElementById('active_meeple')
-        if (active_meeple_node) {
-            active_meeple_node.id = ''
-            active_meeple_node.parentNode.removeChild(active_meeple_node)
-            pickTile()
-        }
-        if (document.game_state == 'meeple-removal') {
-            moveMeeple(document.active_player)
-        }
-
-    }
-}
-document.addEventListener('keypress', handleKeys)
-
-function handleClicks() {
-    // TODO: maybe change if to checking for document.game_state
-    active_tile_node = document.getElementById('active_tile')
-    active_meeple_node = document.getElementById('active_meeple')
-    if (active_tile_node) {
-        slot = getSlotUnderCursor()
-        if (slot) {
-            placeTile(slot)
-        }
-    }
-    else if (active_meeple_node) {
-        tile_node = getTileUnderCursor()
-        if (tile_node) {
-            placeMeeple(tile_node)
-        }
-    }
-    else if (document.game_state == 'meeple-removal') {
-        console.log('removey mcremoveface')
-        let meeple_node = getMeepleUnderCursor()
-        if (meeple_node) {
-            let tile_node = meeple_node.parentNode
-            tile_node.removeChild(meeple_node)
-            document.board[
-                tile_node.getAttribute('board_row')
-            ][
-                tile_node.getAttribute('board_col')
-            ][3] = null
-        }
-    }
-}
-document.addEventListener('click', handleClicks)
 
 function getSlotUnderCursor() {
     console.log('getSlotUnderCursor')
@@ -290,12 +232,6 @@ function getMeepleUnderCursor() {
     return null
 }
 
-function moveTile() {
-    console.log('moveTile')
-    document.game_state = 'tile-placement'
-    document.addEventListener('mousemove', tileFollowMouse)
-}
-
 function placeTile(slot) {
     console.log('placeTile')
     let active_tile_node = document.getElementById('active_tile')
@@ -305,7 +241,6 @@ function placeTile(slot) {
     let typ = active_tile_node.getAttribute('tile_type')
     let rot = active_tile_node.getAttribute('tile_rotation')
     document.board[slot[0]][slot[1]] = [parseInt(typ), parseInt(rot), active_tile_node]
-    extendBoard(slot)
 }
 
 function createMeepleNode(p_num) {
@@ -324,7 +259,6 @@ function createMeepleNode(p_num) {
 
 function moveMeeple(p_num) {
     console.log('moveMeeple')
-    document.game_state = 'meeple-placement'
     meeple_node = createMeepleNode(p_num)
     meeple_node.id = 'active_meeple'
     meeple_node.style.position = 'absolute'
@@ -354,9 +288,6 @@ function placeMeeple(tile_node) {
         meeple_top_rel,
         meeple_left_rel
     ]
-
-    nextPlayer()
-    pickTile()
 }
 
 function updateTileIndices() {
@@ -399,19 +330,83 @@ function extendBoard(slot) {
             document.board[row_i] = document.board[row_i].concat([[0, 0, null]])
         }
     }
-    updateTileIndices()
-    drawBoard()
-    removeMeeple()
 }
 
-function removeMeeple() {
-    document.game_state = 'meeple-removal'
+
+function handleKeys(e) {
+    e = e || window.event
+    var charCode = e.keyCode || e.which
+    var charStr = String.fromCharCode(charCode)
+
+    if (document.game_state == 'setup') {
+        if (charStr == 's') {
+            drawBoard()
+            document.game_state = 'tile-placement'
+            pickAndMoveTile()
+        }
+    }
+    else if (document.game_state == 'tile-placement') {
+        if (charStr == 'r') {
+            active_tile_node = document.getElementById('active_tile')
+            let curr_deg = getTileRotation(active_tile_node)
+            let new_deg = (curr_deg + 90) % 360
+            setTileRotation(active_tile_node, new_deg)
+            active_tile_node.setAttribute('tile_rotation', new_deg)
+        }
+        if (charStr == 's') {
+            // TODO: pick new tile
+        }
+    }
+    else if (document.game_state == 'meeple-removal') {
+        if (charStr == 's') {
+            document.game_state = 'meeple-placement'
+            moveMeeple(document.active_player)
+        }
+    }
+    else if (document.game_state == 'meeple-placement') {
+        if (charStr == 's') {
+            active_meeple_node = document.getElementById('active_meeple')
+            active_meeple_node.id = ''
+            active_meeple_node.parentNode.removeChild(active_meeple_node)
+            document.game_state = 'tile-placement'
+            nextPlayer()
+            pickAndMoveTile()
+        }
+    }
 }
 
-function startGame() {
-    console.log('startGame')
-    document.active_player = document.players[0]
-    pickTile()
+function handleClicks() {
+    if (document.game_state == 'tile-placement') {
+        slot = getSlotUnderCursor()
+        if (slot) {
+            placeTile(slot)
+            extendBoard(slot)
+            updateTileIndices()
+            drawBoard()
+            document.game_state = 'meeple-removal'
+        }
+    }
+    else if (document.game_state == 'meeple-removal') {
+        let meeple_node = getMeepleUnderCursor()
+        if (meeple_node) {
+            let tile_node = meeple_node.parentNode
+            tile_node.removeChild(meeple_node)
+            document.board[
+                tile_node.getAttribute('board_row')
+            ][
+                tile_node.getAttribute('board_col')
+            ][3] = null
+        }
+    }
+    else if (document.game_state == 'meeple-placement') {
+        tile_node = getTileUnderCursor()
+        if (tile_node) {
+            placeMeeple(tile_node)
+            document.game_state = 'tile-placement'
+            nextPlayer()
+            pickAndMoveTile()
+        }
+    }
 }
 
 function nextPlayer() {
@@ -424,20 +419,29 @@ function nextPlayer() {
     }
 }
 
-document.board = [
-    [[0,0,null,null], [0,0,null,null], [0,0,null,null]],
-    [[0,0,null,null], [7,0,null,null], [0,0,null,null]],
-    [[0,0,null,null], [0,0,null,null], [0,0,null,null]]
-]
+function handleInput(e) {
+    if (event.type == 'click') {
+        handleClicks()
+    }
+    else if (event.type == 'keypress') {
+        handleKeys()
+    }
+}
 
-document.players = [0, 1, 2]
-document.game_state = 'setup'
-drawBoard()
-startGame()
+function setup() {
+    document.game_state = 'setup'
+    document.board = [
+        [[0,0,null,null], [0,0,null,null], [0,0,null,null]],
+        [[0,0,null,null], [7,0,null,null], [0,0,null,null]],
+        [[0,0,null,null], [0,0,null,null], [0,0,null,null]]
+    ]
+    document.players = [0, 1, 2]
+    document.active_player = document.players[0]
+    document.addEventListener('click', handleInput)
+    document.addEventListener('keypress', handleInput)
+}
 
-// TODO:
-// implement placing meeple freely (=> no automated scoring)
-// implement taking turns
+setup()
 
 </script>
 </body>
