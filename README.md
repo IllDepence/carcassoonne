@@ -2,6 +2,8 @@
 
 Infinite Carcassonne.
 
+[▶ P L A Y ◀](https://illdepence.github.io/carcassoonne/)
+
 ## Features
 
 * placing of meeples and tiles
